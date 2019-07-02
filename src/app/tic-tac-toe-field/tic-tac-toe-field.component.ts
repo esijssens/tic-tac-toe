@@ -6,9 +6,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tic-tac-toe-field.component.css']
 })
 export class TicTacToeFieldComponent implements OnInit {
-
+  symbols: string[] = ["x", "o"]
+  fieldSize: number = 3;
+  
   squares: string[][];
-  turnX: boolean;
+  turnPlayer: number;
   status: string;
   gameActive: boolean;
 
@@ -18,12 +20,16 @@ export class TicTacToeFieldComponent implements OnInit {
     this.newGame();
   }
 
-  playMove(index: [number, number]) {
-    if (this.gameActive && this.squares[index[0]][index[1]] === "") {
-      let symbol: string = this.turnX ? "x" : "o";
+  playMove(index: [number, number]) {    
+    if (this.gameActive && !this.squares[index[0]][index[1]]) {
+      const symbol: string = this.symbols[this.turnPlayer];
       this.squares[index[0]][index[1]] = symbol;
-      this.turnX = !this.turnX;
-      this.status = `${this.turnX ? "x" : "o"} turn`
+
+      // Next players turn
+      this.turnPlayer = (this.turnPlayer + 1) % this.symbols.length;
+      this.status = `${this.symbols[this.turnPlayer]} turn`
+      
+      // Check if game has ended
       if (this.checkWin(index, symbol)) {
         this.declareWinner(symbol);
       } else if (this.checkBoardFull()) {
@@ -36,7 +42,7 @@ export class TicTacToeFieldComponent implements OnInit {
   checkWin(index: [number, number], symbol: string): boolean {
     const x = index[0];
     const y = index[1];
-    const n = 3;
+    const n = this.fieldSize;
 
     // check colomn
     for (let i = 0; i < n; i++) {
@@ -83,7 +89,7 @@ export class TicTacToeFieldComponent implements OnInit {
   checkBoardFull(): boolean {
     for (let row of this.squares) {
       for (let square of row) {
-        if (square === "") {
+        if (!square) {
           return false;
         }
       }
@@ -97,9 +103,12 @@ export class TicTacToeFieldComponent implements OnInit {
   }
 
   newGame() {
-    this.squares = [["", "", ""], ["", "", ""], ["", "", ""]];
-    this.status = "x turn";
-    this.turnX = true;
+    this.squares = new Array();
+    for (let i = 0; i < this.fieldSize; i++) {
+      this.squares.push(new Array(this.fieldSize));
+    }
+    this.turnPlayer = 0;
+    this.status = `${this.symbols[this.turnPlayer]} turn`
     this.gameActive = true;
   }
 
