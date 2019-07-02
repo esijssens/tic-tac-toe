@@ -76,7 +76,6 @@ export class TicTacToeFieldComponent implements OnInit {
       }
       if (i === n - 1) {
         return true;
-        return;
       }
     }
   }
