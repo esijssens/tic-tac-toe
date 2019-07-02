@@ -1,0 +1,7 @@
+<div>
+    <div *ngFor="let row of squares; let y = index">
+        <div class="square" (click)="playMove([x,y])" *ngFor="let square of row; let x = index">{{ squares[x][y] }}</div>
+    </div>
+    <p>{{ status }}</p>
+    <button (click)="newGame()">New Game</button>
+</div>
