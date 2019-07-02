@@ -9,7 +9,7 @@ export class TicTacToeFieldComponent implements OnInit {
 
   squares: string[][];
   turnX: boolean;
-  status :string;
+  status: string;
   gameActive: boolean;
 
   constructor() { }
@@ -24,65 +24,72 @@ export class TicTacToeFieldComponent implements OnInit {
       this.squares[index[0]][index[1]] = symbol;
       this.turnX = !this.turnX;
       this.status = `${this.turnX ? "x" : "o"} turn`
-      this.checkGameEnd(index, symbol);
+      if (this.checkWin(index, symbol)) {
+        this.declareWinner(symbol);
+      } else if (this.checkBoardFull()) {
+        this.status = "Draw";
+        this.gameActive = false;
+      }
     }
   }
 
-  checkGameEnd(index: [number, number], symbol:string) {
+  checkWin(index: [number, number], symbol: string): boolean {
     const x = index[0];
     const y = index[1];
     const n = 3;
 
     // check colomn
     for (let i = 0; i < n; i++) {
-      if (this.squares[x][i] !== symbol) {      
+      if (this.squares[x][i] !== symbol) {
         break;
       }
-      if (i === n-1) {
-        this.declareWinner(symbol);
+      if (i === n - 1) {
+        return true;
       }
     }
 
     // check row
     for (let i = 0; i < n; i++) {
-      if (this.squares[i][y] !== symbol) {      
+      if (this.squares[i][y] !== symbol) {
         break;
       }
-      if (i === n-1) {
-        this.declareWinner(symbol);
+      if (i === n - 1) {
+        return true;
       }
     }
 
     // check diagonal
     for (let i = 0; i < n; i++) {
-      if (this.squares[i][i] !== symbol) {      
+      if (this.squares[i][i] !== symbol) {
         break;
       }
-      if (i === n-1) {
-        this.declareWinner(symbol);
+      if (i === n - 1) {
+        return true;
+
       }
     }
 
     // check anti diagonal
     for (let i = 0; i < n; i++) {
-      if (this.squares[i][n-1-i] !== symbol) {      
+      if (this.squares[i][n - 1 - i] !== symbol) {
         break;
       }
-      if (i === n-1) {
-        this.declareWinner(symbol);
+      if (i === n - 1) {
+        return true;
+        return;
       }
     }
+  }
 
-    // Check if board is full
+  checkBoardFull(): boolean {
     for (let row of this.squares) {
       for (let square of row) {
         if (square === "") {
-          return;
+          return false;
         }
       }
     }
-    this.status = "Draw";
-    this.gameActive = false;
+    return true;
   }
 
   declareWinner(symbol: string) {
